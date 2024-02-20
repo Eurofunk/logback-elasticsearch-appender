@@ -30,7 +30,7 @@
         <developerConnection>scm:git:https://github.com/internetitem/logback-elasticsearch-appender.git
         </developerConnection>
         <url>https://github.com/internetitem/logback-elasticsearch-appender</url>
-        <tag>v1.6</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>

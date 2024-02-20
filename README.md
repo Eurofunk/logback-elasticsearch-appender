@@ -16,7 +16,7 @@ In your `pom.xml` (or equivalent), add:
      <dependency>
         <groupId>com.internetitem</groupId>
         <artifactId>logback-elasticsearch-appender</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
      </dependency>
 
 In your `logback.xml`:
@@ -65,7 +65,7 @@ In your `logback.xml`:
             <headers>
                 <header>
                     <name>Content-Type</name>
-                    <value>text/plain</value>
+                    <value>application/json</value>
                 </header>
             </headers>
         </appender>
@@ -116,6 +116,7 @@ The fields `@timestamp` and `message` are always sent and can not currently be c
  * `name` (required): Key to be used in the log event
  * `value` (required): Text string to be sent. Internally, the value is populated using a Logback PatternLayout, so all [Conversion Words](http://logback.qos.ch/manual/layouts.html#conversionWord) can be used (in addition to the standard static variable interpolations like `${HOSTNAME}`).
  * `allowEmpty` (optional, default `false`): Normally, if the `value` results in a `null` or empty string, the field will not be sent. If `allowEmpty` is set to `true` then the field will be sent regardless
+ * `type` (optional, default `String`): type of the field on the resulting JSON message. Possible values are: `String`, `int`, `float` and `boolean`.
 
 Groovy Configuration
 ====================
