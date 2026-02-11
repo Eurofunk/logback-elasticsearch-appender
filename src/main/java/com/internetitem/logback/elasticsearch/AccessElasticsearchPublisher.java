@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Context;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonGenerator;
 import com.internetitem.logback.elasticsearch.config.ElasticsearchProperties;
 import com.internetitem.logback.elasticsearch.config.HttpRequestHeaders;
 import com.internetitem.logback.elasticsearch.config.Property;
@@ -26,6 +26,6 @@ public class AccessElasticsearchPublisher extends AbstractElasticsearchPublisher
 
 	@Override
 	protected void serializeCommonFields(JsonGenerator gen, IAccessEvent event) throws IOException {
-		gen.writeObjectField("@timestamp", getTimestamp(event.getTimeStamp()));
+		gen.writeStringProperty("@timestamp", getTimestamp(event.getTimeStamp()));
 	}
 }

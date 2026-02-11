@@ -2,7 +2,7 @@ package com.internetitem.logback.elasticsearch;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonGenerator;
 import com.internetitem.logback.elasticsearch.config.ElasticsearchProperties;
 import com.internetitem.logback.elasticsearch.config.HttpRequestHeaders;
 import com.internetitem.logback.elasticsearch.config.Property;
@@ -27,10 +27,10 @@ public class ClassicElasticsearchPublisher extends AbstractElasticsearchPublishe
 
     @Override
     protected void serializeCommonFields(JsonGenerator gen, ILoggingEvent event) throws IOException {
-        gen.writeObjectField("@timestamp", getTimestamp(event.getTimeStamp()));
+        gen.writeStringProperty("@timestamp", getTimestamp(event.getTimeStamp()));
 
         if (settings.isRawJsonMessage()) {
-            gen.writeFieldName("message");
+            gen.writeName("message");
             gen.writeRawValue(event.getFormattedMessage());
         } else {
             String formattedMessage = event.getFormattedMessage();
@@ -39,12 +39,12 @@ public class ClassicElasticsearchPublisher extends AbstractElasticsearchPublishe
                     && formattedMessage.length() > settings.getMaxMessageSize()) {
                 formattedMessage = formattedMessage.substring(0, settings.getMaxMessageSize()) + "..";
             }
-            gen.writeObjectField("message", formattedMessage);
+            gen.writeStringProperty("message", formattedMessage);
         }
 
         if (settings.isIncludeMdc()) {
             for (Map.Entry<String, String> entry : event.getMDCPropertyMap().entrySet()) {
-                gen.writeObjectField(entry.getKey(), entry.getValue());
+                gen.writeStringProperty(entry.getKey(), entry.getValue());
             }
         }
     }

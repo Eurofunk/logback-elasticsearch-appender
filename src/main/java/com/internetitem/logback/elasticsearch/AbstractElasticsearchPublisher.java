@@ -1,8 +1,6 @@
 package com.internetitem.logback.elasticsearch;
 
 import ch.qos.logback.core.Context;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.internetitem.logback.elasticsearch.config.ElasticsearchProperties;
 import com.internetitem.logback.elasticsearch.config.HttpRequestHeaders;
 import com.internetitem.logback.elasticsearch.config.Property;
@@ -12,6 +10,9 @@ import com.internetitem.logback.elasticsearch.util.ErrorReporter;
 import com.internetitem.logback.elasticsearch.writer.ElasticsearchWriter;
 import com.internetitem.logback.elasticsearch.writer.LoggerWriter;
 import com.internetitem.logback.elasticsearch.writer.StdErrWriter;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -40,7 +41,7 @@ public abstract class AbstractElasticsearchPublisher<T> implements Runnable {
 	private List<AbstractPropertyAndEncoder<T>> propertyList;
 
 	private AbstractPropertyAndEncoder<T> indexPattern;
-	private JsonFactory jf;
+	private TokenStreamFactory jf;
 	private JsonGenerator jsonGenerator;
 
 	private ErrorReporter errorReporter;
@@ -60,7 +61,6 @@ public abstract class AbstractElasticsearchPublisher<T> implements Runnable {
 		this.outputAggregator = configureOutputAggregator(settings, errorReporter, headers);
 
 		this.jf = new JsonFactory();
-		this.jf.setRootValueSeparator(null);
 		this.jsonGenerator = jf.createGenerator(outputAggregator);
 
 		this.indexPattern = buildPropertyAndEncoder(context, new Property("<index>", settings.getIndex(), false));
@@ -188,13 +188,13 @@ public abstract class AbstractElasticsearchPublisher<T> implements Runnable {
 
 	private void serializeIndexString(JsonGenerator gen, T event) throws IOException {
 		gen.writeStartObject();
-			gen.writeObjectFieldStart("index");
-				gen.writeObjectField("_index", indexPattern.encode(event));
+			gen.writeObjectPropertyStart("index");
+				gen.writeStringProperty("_index", indexPattern.encode(event));
 				String type = settings.getType();
 				if (type != null) {
-					gen.writeObjectField("_type", type);
+					gen.writeStringProperty("_type", type);
 				}
-				gen.writeObjectField("_id", UUID.randomUUID().toString());
+				gen.writeStringProperty("_id", UUID.randomUUID().toString());
 			gen.writeEndObject();
 		gen.writeEndObject();
 	}
@@ -208,7 +208,7 @@ public abstract class AbstractElasticsearchPublisher<T> implements Runnable {
 			for (AbstractPropertyAndEncoder<T> pae : propertyList) {
 				String value = pae.encode(event);
 				if (pae.allowEmpty() || (value != null && !value.isEmpty())) {
-					gen.writeObjectField(pae.getName(), value);
+					gen.writeStringProperty(pae.getName(), value);
 				}
 			}
 		} finally {
