@@ -1,3 +1,9 @@
+# Deprecation:
+
+
+moved to internal repo `foundation/jvm/libs/logback-elasticsearch-appender`
+
+
 Logback Elasticsearch Appender
 ===============================
 
